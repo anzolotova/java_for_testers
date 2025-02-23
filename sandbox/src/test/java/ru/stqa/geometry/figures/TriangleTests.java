@@ -8,7 +8,7 @@ public class TriangleTests {
     @Test
     void canCalculateArea() {
         var result = Triangle.Area(4.0, 6.0, 8.0);
-        Assertions.assertEquals(11.6, result);
+        Assertions.assertEquals(11.61895003862225, result);
     }
 
     @Test
