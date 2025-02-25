@@ -1,39 +1,24 @@
 package ru.stqa.geometry.figures;
 
-public class Triangle {
+public record Triangle(double sideA, double sideB, double sideC) {
 
-    public static void main(String[] args) {
-        printTrianglePerimetr(4.0, 6.0, 8.0);
-        printTriangleArea(4.0, 6.0, 8.0);
-    }
-
-    public static double sideA;
-    public static double sideB;
-    public static double sideC;
-
-    public Triangle(double sideA, double sideB, double sideC) {
-        this.sideA = sideA;
-        this.sideB = sideB;
-        this.sideC = sideC;
-    }
-
-    public static void printTrianglePerimetr(double sideA, double sideB, double sideC) {
-        String text = String.format("Периметр треугольника со сторонами %f, %f и %f = %f", sideA, sideB, sideC, Perimetr(sideA, sideB, sideC));
+    public static void printTriangleperimetr(Triangle trio) {
+        String text = String.format("Периметр треугольника со сторонами %f, %f и %f = %f", trio.sideA, trio.sideB, trio.sideC, trio.perimetr());
         System.out.println(text);
     }
 
-    public static void printTriangleArea(double sideA, double sideB, double sideC) {
-        String text1 = String.format("Площадь треугольника со сторонами %f, %f и %f = %f", sideA, sideB, sideC, Area(sideA, sideB, sideC));
+    public static void printTrianglearea(Triangle trio) {
+        String text1 = String.format("Площадь треугольника со сторонами %f, %f и %f = %f", trio.sideA, trio.sideB, trio.sideC, trio.area());
         System.out.println(text1);
     }
 
-    public static double Perimetr(double sideA, double sideB, double sideC) {
-        return sideA + sideB + sideC;
+    public double perimetr() {
+        return this.sideA + this.sideB + this.sideC;
     }
 
-    public static double Area(double sideA, double sideB, double sideC) {
-        double pp = (sideA + sideB + sideC)/2;
-        return Math.sqrt(pp * (pp - sideA) * (pp - sideB) * (pp - sideC));
+    public double area() {
+        double pp = (this.sideA + this.sideB + this.sideC)/2;
+        return Math.sqrt(pp * (pp - this.sideA) * (pp - this.sideB) * (pp - this.sideC));
     }
 
 }
