@@ -29,7 +29,7 @@ public class TriangleTests {
             exception.printStackTrace();
         }
     }
-    
+
     @Test
     void testEquality() {
         var t1 = new Triangle(5.0, 4.0, 3.0);
