@@ -2,20 +2,18 @@ package ru.stqa.geometry.figures;
 
 public record Square(double side) {
 
-    public static void printSquareArea(double side) {
-        String text = String.format("Площадь квадрата со стороной %f = %f", side, Area(side));
+    public Square {
+        if (side < 0) {
+            throw new IllegalArgumentException("Square side should be non-negative");
+        }
+    }
+
+    public static void printSquareArea(Square s) {
+        String text = String.format("Площадь квадрата со стороной %f = %f", s.side, s.area());
         System.out.println(text);
     }
 
-    public static double Area(double a) {
-        return a * a;
-    }
-
-    public static double perimeter(double a) {
-        return 4 * a;
-    }
-
-    public double Area() {
+    public double area() {
         return this.side * this.side;
     }
 
