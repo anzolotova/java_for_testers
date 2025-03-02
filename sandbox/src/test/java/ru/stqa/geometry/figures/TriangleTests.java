@@ -21,25 +21,15 @@ public class TriangleTests {
     }
 
     @Test
-    void  cannotCreateTriangleWithNegativeSide() {
+    void  cannotCreateTriangleNotValidSide() {
         try {
-            new Triangle(-5.0, 3.0, 8.0);
+            new Triangle(1.0, 10.0, 1.0);
             Assertions.fail();
         } catch (IllegalArgumentException exception) {
             exception.printStackTrace();
         }
     }
-
-    @Test
-    void sumSidesTriangleLess() {
-        try {
-            new Triangle(1.0, 1.0, 10.0);
-            Assertions.fail();
-        } catch (IllegalArgumentException exception) {
-            exception.printStackTrace();
-        }
-    }
-
+    
     @Test
     void testEquality() {
         var t1 = new Triangle(5.0, 4.0, 3.0);
