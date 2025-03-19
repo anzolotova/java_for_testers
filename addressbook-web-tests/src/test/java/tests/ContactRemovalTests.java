@@ -3,7 +3,9 @@ package tests;
 import model.ContactData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ContactRemovalTests extends TestBase {
 
@@ -12,14 +14,18 @@ public class ContactRemovalTests extends TestBase {
         if (app.contacts().getCount() == 0) {
             app.contacts().createContact(new ContactData());
         }
-        int contactCount = app.contacts().getCount();
-        app.contacts().deleteContact();
-        int newContactCount = app.contacts().getCount();
-        Assertions.assertEquals(contactCount - 1, newContactCount);
+        var oldContacts = app.contacts().getList();
+        var rnd = new Random();
+        var index = rnd.nextInt(oldContacts.size());
+        app.contacts().deleteContact(oldContacts.get(index));
+        var newContacts = app.contacts().getList();
+        var expectedList = new ArrayList<>(oldContacts);
+        expectedList.remove(index);
+        Assertions.assertEquals(newContacts, expectedList);
     }
 
     @Test
-    void canRemoveAllGroupsAtOnce() {
+    void canRemoveAllContactsAtOnce() {
         if (app.contacts().getCount() == 0) {
             app.contacts().createContact(new ContactData());
         }
