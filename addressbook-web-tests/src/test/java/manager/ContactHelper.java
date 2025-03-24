@@ -13,7 +13,7 @@ public class ContactHelper extends HelperBase {
 
 
     public void createContact(ContactData contact) {
-        openConactAddPage();
+        openContactAddPage();
         fillContactForm(contact);
         submitContactCreation();
         openHomePage();
@@ -38,6 +38,7 @@ public class ContactHelper extends HelperBase {
         type(By.name("mobile"), contact.mobilePhone());
         type(By.name("work"), contact.workPhone());
         type(By.name("email"), contact.email());
+        attach(By.name("photo"), contact.photo());
         type(By.name("homepage"), contact.homepage());
     }
 
@@ -57,7 +58,7 @@ public class ContactHelper extends HelperBase {
         click(By.name("update"));
     }
 
-    public void openConactAddPage() {
+    public void openContactAddPage() {
         if (!manager.isElementPresent(By.name("submit"))) {
             click(By.linkText("add new"));
         }
