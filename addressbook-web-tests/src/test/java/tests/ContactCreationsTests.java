@@ -34,6 +34,47 @@ public class ContactCreationsTests extends TestBase {
         return result;
     }
 
+    public static List<ContactData> singleRandomContact() {
+        return List.of(new ContactData()
+                .withFirstname(CommonFunctions.randomString(10))
+                .withLastname(CommonFunctions.randomString(20))
+                .withNickname(CommonFunctions.randomString(30)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("singleRandomContact")
+    public void canCreateContact(ContactData contact) {
+        var oldContacts = app.jdbc().getContactList();
+        app.contacts().createContact(contact);
+        var newContacts = app.jdbc().getContactList();
+        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
+            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
+        };
+        newContacts.sort(compareByIdContact);
+        var maxId = newContacts.get(newContacts.size() - 1).idContact();
+        var expectedList = new ArrayList<>(oldContacts);
+        expectedList.add(contact.withIdContact(maxId));
+        expectedList.sort(compareByIdContact);
+        Assertions.assertEquals(newContacts, expectedList);
+    }
+
+    @ParameterizedTest
+    @MethodSource("singleRandomContact")
+    public void canCreateContactHBM(ContactData contact) {
+        var oldContacts = app.hbm().getContactList();
+        app.contacts().createContact(contact);
+        var newContacts = app.hbm().getContactList();
+        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
+            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
+        };
+        newContacts.sort(compareByIdContact);
+        var maxId = newContacts.get(newContacts.size() - 1).idContact();
+        var expectedList = new ArrayList<>(oldContacts);
+        expectedList.add(contact.withIdContact(maxId));
+        expectedList.sort(compareByIdContact);
+        Assertions.assertEquals(newContacts, expectedList);
+    }
+
     @ParameterizedTest
     @MethodSource("contactProvider")
     public void canCreateMultiContacts(ContactData contact) {

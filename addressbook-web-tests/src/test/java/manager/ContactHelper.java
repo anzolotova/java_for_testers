@@ -21,6 +21,7 @@ public class ContactHelper extends HelperBase {
 
     public void deleteContact(ContactData contact) {
         openHomePage();
+        updateHomePage();
         selectContact(contact);
         deleteSelectedContacts();
         openHomePage();
@@ -38,16 +39,21 @@ public class ContactHelper extends HelperBase {
         type(By.name("mobile"), contact.mobilePhone());
         type(By.name("work"), contact.workPhone());
         type(By.name("email"), contact.email());
-        attach(By.name("photo"), contact.photo());
         type(By.name("homepage"), contact.homepage());
+        //attach(By.name("photo"), contact.photo());
     }
 
     public void modifyContact(ContactData contact, ContactData modifiedContact) {
         openHomePage();
+        updateHomePage();
         initContactModification(contact);
         fillContactForm(modifiedContact);
         submitContactModification();
         openHomePage();
+    }
+
+    private void updateHomePage() {
+        click(By.linkText("home"));
     }
 
     private void initContactModification(ContactData contact) {
@@ -111,7 +117,7 @@ public class ContactHelper extends HelperBase {
             var td = tr.findElements(By.tagName("td"));
             var lastname = td.get(1).getText();
             var firstname = td.get(2).getText();
-            contacts.add(new ContactData().withIdContact(idContact).withlastname(lastname).withfirstname(firstname));
+            contacts.add(new ContactData().withIdContact(idContact).withLastname(lastname).withFirstname(firstname));
         }
         return contacts;
     }

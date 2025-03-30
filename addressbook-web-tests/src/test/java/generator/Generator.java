@@ -8,7 +8,6 @@ import common.CommonFunctions;
 import model.ContactData;
 import model.GroupData;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class Generator {
         var result = new ArrayList<ContactData>();
         for (int i = 0; i < count; i++) {
             result.add(new ContactData()
-                    .withfirstname(CommonFunctions.randomString(i * 3))
+                    .withFirstname(CommonFunctions.randomString(i * 3))
                     .withNickname(CommonFunctions.randomString(i * 3))
                     .withPhoto(CommonFunctions.randomFile("src/test/resources/images")));
         }
