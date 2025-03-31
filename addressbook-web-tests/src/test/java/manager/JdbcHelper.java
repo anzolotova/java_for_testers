@@ -50,4 +50,16 @@ public class JdbcHelper extends HelperBase {
         }
         return contacts;
     }
+
+    public void checkConsistency() {
+        try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
+             var statement = conn.createStatement();
+             var result = statement.executeQuery("SELECT * from `address_in_groups` a left join addressbook b on a.id = b.id where b.id is NULL")) {
+            if (result.next()) {
+                throw new IllegalStateException("db is corrupted");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
