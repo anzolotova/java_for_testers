@@ -1,5 +1,6 @@
 package tests;
 
+import common.CommonFunctions;
 import model.ContactData;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.Set;
 
 public class ContactModificationsTests extends TestBase {
 
@@ -19,17 +21,12 @@ public class ContactModificationsTests extends TestBase {
         var oldContacts = app.hbm().getContactList();
         var rnd = new Random();
         var index = rnd.nextInt(oldContacts.size());
-        var testDataContact = new ContactData().withFirstname("new firstname");
+        var testDataContact = new ContactData().withFirstname(CommonFunctions.randomString(10));
         app.contacts().modifyContact(oldContacts.get(index), testDataContact);
         var newContacts = app.hbm().getContactList();
         var expectedList = new ArrayList<>(oldContacts);
         expectedList.set(index, testDataContact.withIdContact(oldContacts.get(index).idContact()));
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-        };
-        newContacts.sort(compareByIdContact);
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newContacts, expectedList);
+        Assertions.assertEquals(Set.copyOf(newContacts), Set.copyOf(expectedList));
     }
 
 
@@ -63,10 +60,10 @@ public class ContactModificationsTests extends TestBase {
     @Test
     void addContactToGroup() {
         if (app.hbm().getContactCount() == 0) {
-            app.hbm().createContact(new ContactData().withFirstname("contact with group"));
+            app.hbm().createContact(new ContactData().withFirstname(CommonFunctions.randomString(10)));
         }
         if (app.hbm().getGroupCount() == 0) {
-            app.hbm().createGroup(new GroupData().withName("group with contact"));
+            app.hbm().createGroup(new GroupData().withName(CommonFunctions.randomString(10)));
         }
         var contact = app.hbm().getContactList();
         var group = app.hbm().getGroupList();
@@ -92,14 +89,9 @@ public class ContactModificationsTests extends TestBase {
         var oldRelated = app.hbm().getContactsInGroup(selectedGroup);
         app.contacts().addContactToGroup(selectedContact, selectedGroup);
         var newRelated = app.hbm().getContactsInGroup(selectedGroup);
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-        };
-        newRelated.sort(compareByIdContact);
         var expectedList = new ArrayList<>(oldRelated);
         expectedList.add(selectedContact);
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newRelated, expectedList);
+        Assertions.assertEquals(Set.copyOf(newRelated), Set.copyOf(expectedList));
     }
 
 
@@ -133,11 +125,11 @@ public class ContactModificationsTests extends TestBase {
     void deleteContactFromGroup() {
         if (app.hbm().getContactCount() == 0) {
             app.hbm().createContact(new ContactData()
-                    .withFirstname("contact with group")
+                    .withFirstname(CommonFunctions.randomString(10))
                     .withIdContact(String.valueOf(app.hbm().getContactCount() + 1)));
         }
         if (app.hbm().getGroupCount() == 0) {
-            app.hbm().createGroup(new GroupData().withName("group with contact"));
+            app.hbm().createGroup(new GroupData().withName(CommonFunctions.randomString(10)));
         }
         GroupData groupWithContact = null;
         ContactData contactToRemove = null;
@@ -158,14 +150,8 @@ public class ContactModificationsTests extends TestBase {
         var oldRelated = app.hbm().getContactsInGroup(groupWithContact);
         app.contacts().deleteContactFromGroup(contactToRemove, groupWithContact);
         var newRelated = app.hbm().getContactsInGroup(groupWithContact);
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact())
-            );
-        };
-        newRelated.sort(compareByIdContact);
         var expectedList = new ArrayList<>(oldRelated);
         expectedList.remove(contactToRemove);
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newRelated, expectedList);
+        Assertions.assertEquals(Set.copyOf(newRelated), Set.copyOf(expectedList));
     }
 }

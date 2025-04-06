@@ -7,7 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ContactHelper extends HelperBase {
 
@@ -56,6 +58,8 @@ public class ContactHelper extends HelperBase {
         type(By.name("work"), contact.workPhone());
         type(By.name("email"), contact.email());
         type(By.name("homepage"), contact.homepage());
+        type(By.name("email2"), contact.homepage());
+        type(By.name("email3"), contact.homepage());
         //attach(By.name("photo"), contact.photo());
     }
 
@@ -86,7 +90,7 @@ public class ContactHelper extends HelperBase {
         openHomePage();
     }
 
-    private void updateHomePage() {
+    public void updateHomePage() {
         click(By.linkText("home"));
         WebElement dropdown = manager.driver.findElement(By.name("group"));
         Select select = new Select(dropdown);
@@ -174,5 +178,28 @@ public class ContactHelper extends HelperBase {
 
     private void removeContactFromGroup() {
         click(By.name("remove"));
+    }
+
+    public String getPhones(ContactData contact) {
+        return manager.driver.findElement(By.xpath(String.format("//input[@id='%s']/../../td[6]", contact.idContact()))).getText();
+    }
+
+    public String getAddress(ContactData contact) {
+        return manager.driver.findElement(By.xpath(String.format("//input[@id='%s']/../../td[4]", contact.idContact()))).getText();
+    }
+
+    public String getEMail(ContactData contact) {
+        return manager.driver.findElement(By.xpath(String.format("//input[@id='%s']/../../td[5]", contact.idContact()))).getText();
+    }
+
+    public Map<String, String> getPhones() {
+        var result = new HashMap<String, String>();
+        List<WebElement> rows = manager.driver.findElements(By.name("entry"));
+        for (WebElement row : rows) {
+            var id = row.findElement(By.tagName("input")).getAttribute("id");
+            var phones = row.findElements(By.tagName("td")).get(5).getText();
+            result.put(id, phones);
+        }
+        return result;
     }
 }

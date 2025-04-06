@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class ContactCreationsTests extends TestBase {
 
@@ -35,49 +35,45 @@ public class ContactCreationsTests extends TestBase {
         return result;
     }
 
-    public static List<ContactData> singleRandomContact() {
+    public static List<ContactData> randomContact() {
         return List.of(new ContactData()
                 .withFirstname(CommonFunctions.randomString(10))
                 .withLastname(CommonFunctions.randomString(20))
                 .withNickname(CommonFunctions.randomString(30)));
     }
 
-    @ParameterizedTest
-    @MethodSource("singleRandomContact")
-    public void canCreateContact(ContactData contact) {
-        var oldContacts = app.jdbc().getContactList();
-        app.contacts().createContact(contact);
-        var newContacts = app.jdbc().getContactList();
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-        };
-        newContacts.sort(compareByIdContact);
-        var maxId = newContacts.get(newContacts.size() - 1).idContact();
-        var expectedList = new ArrayList<>(oldContacts);
-        expectedList.add(contact.withIdContact(maxId));
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newContacts, expectedList);
-    }
+//    @ParameterizedTest
+//    @MethodSource("randomContact")
+//    public void canCreateContact(ContactData contact) {
+//        var oldContacts = app.jdbc().getContactList();
+//        app.contacts().createContact(contact);
+//        var newContacts = app.jdbc().getContactList();
+//        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
+//            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
+//        };
+//        newContacts.sort(compareByIdContact);
+//        var maxId = newContacts.get(newContacts.size() - 1).idContact();
+//        var expectedList = new ArrayList<>(oldContacts);
+//        expectedList.add(contact.withIdContact(maxId));
+//        expectedList.sort(compareByIdContact);
+//        Assertions.assertEquals(newContacts, expectedList);
+//    }
 
     @ParameterizedTest
-    @MethodSource("singleRandomContact")
-    public void canCreateContactHBM(ContactData contact) {
+    @MethodSource("randomContact")
+    public void canCreateContact(ContactData contact) {
         var oldContacts = app.hbm().getContactList();
         app.contacts().createContact(contact);
         var newContacts = app.hbm().getContactList();
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-        };
-        newContacts.sort(compareByIdContact);
-        var maxId = newContacts.get(newContacts.size() - 1).idContact();
+        var extraContacts = newContacts.stream().filter(c -> ! oldContacts.contains(c)).toList();
+        var newId = extraContacts.get(0).idContact();
         var expectedList = new ArrayList<>(oldContacts);
-        expectedList.add(contact.withIdContact(maxId));
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newContacts, expectedList);
+        expectedList.add(contact.withIdContact(newId));
+        Assertions.assertEquals(Set.copyOf(newContacts), Set.copyOf(expectedList));
     }
 
     @ParameterizedTest
-    @MethodSource("singleRandomContact")
+    @MethodSource("randomContact")
     public void canCreateContactInGroup(ContactData contact) {
         if (app.hbm().getGroupCount() == 0) {
             app.hbm().createGroup(new GroupData("", "group name", "group header", "group footer"));
@@ -86,15 +82,10 @@ public class ContactCreationsTests extends TestBase {
         var oldRelated = app.hbm().getContactsInGroup(group);
         app.contacts().createContact(contact, group);
         var newRelated = app.hbm().getContactsInGroup(group);
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-        };
-        newRelated.sort(compareByIdContact);
-        var maxId = newRelated.get(newRelated.size() - 1).idContact();
+        var newId = newRelated.get(newRelated.size() - 1).idContact();
         var expectedList = new ArrayList<>(oldRelated);
-        expectedList.add(contact.withIdContact(maxId));
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newRelated, expectedList);
+        expectedList.add(contact.withIdContact(newId));
+        Assertions.assertEquals(Set.copyOf(newRelated), Set.copyOf(expectedList));
     }
 
     @ParameterizedTest
@@ -103,19 +94,14 @@ public class ContactCreationsTests extends TestBase {
         var oldContacts = app.hbm().getContactList();
         app.contacts().createContact(contact);
         var newContacts = app.hbm().getContactList();
-        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-        };
-        newContacts.sort(compareByIdContact);
         var expectedList = new ArrayList<>(oldContacts);
         expectedList.add(contact.withIdContact(newContacts.get(newContacts.size() - 1).idContact()).withNickname("").withPhoto(""));
-        expectedList.sort(compareByIdContact);
-        Assertions.assertEquals(newContacts, expectedList);
+        Assertions.assertEquals(Set.copyOf(newContacts), Set.copyOf(expectedList));
     }
 
     public static List<ContactData> negativeContactProvider() {
         var result = new ArrayList<ContactData>(List.of(
-                new ContactData("", "First name'", "Middle name", "Last name", "Nickname", "Title", "Company", "Address", "888", "123", "456", "e-mail", "Homepage", "")));
+                new ContactData("", "First name'", "Middle name", "Last name", "Nickname", "Title", "Company", "Address", "888", "123", "456", "e-mail", "", "", "Homepage", "")));
         return result;
     }
 

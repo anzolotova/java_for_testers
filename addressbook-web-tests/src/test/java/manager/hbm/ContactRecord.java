@@ -26,10 +26,23 @@ public class ContactRecord {
     public String email3 = "";
     public String homepage = "";
     public ContactRecord(){}
-    public ContactRecord(int id, String firstname, String lastname, String nickname) {
+    public ContactRecord(int id, String firstname, String middlename, String lastname, String nickname, String title,
+                         String company, String address, String home, String mobile, String work,
+                         String email, String email2, String email3, String homepage) {
         this.id = id;
         this.firstname = firstname;
+        this.middlename = middlename;
         this.lastname = lastname;
         this.nickname = nickname;
+        this.title = title;
+        this.company = company;
+        this.address = address;
+        this.home = home;
+        this.mobile = mobile;
+        this.work = work;
+        this.email = email;
+        this.email2 = email2;
+        this.email3 = email3;
+        this.homepage = homepage;
     }
 }
