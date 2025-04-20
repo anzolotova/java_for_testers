@@ -1,7 +1,6 @@
 package ru.stqa.mantis.tests;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.stqa.mantis.common.CommonFunctions;
@@ -44,4 +43,33 @@ public class UserRegistrationTests extends TestBase {
         Assertions.assertTrue(app.http().isLoggedIn());
     }
 
+
+
+    @ParameterizedTest
+    @MethodSource("randomUsername")
+    public void canRegisterUserApi(String username) {
+        var email = String.format("%s@localhost", username);
+        // создать пользователя (адрес) на почтовом сервере через Api
+        app.jamesApi().addUser(email,"password");
+        // Регистрируем пользователя через API вместо UI
+        app.rest().createNewAccountApi(username, email);
+        // ждём и получаем почту (MailHelper)
+        var messages = app.mail().receive(email,"password", Duration.ofSeconds(10));
+        // извлекаем ссылку из письма
+        var text = messages.get(0).content();
+        var pattern = Pattern.compile("http://\\S*");
+        var matcher = pattern.matcher(text);
+        if (!matcher.find()) {
+            throw new AssertionError("Activation URL not found in email");
+        }
+        var url = text.substring(matcher.start(), matcher.end());
+        if (url.isBlank()) {
+            throw new AssertionError("Activation URL is empty");
+        }
+        // проходим по ссылке и завершаем регистрацию -- браузер
+        app.user().activateUserAccount(url);
+        // проверяем, что пользователь может залогиниться (HttpSessionHelper)
+        app.http().login(username, "password");
+        Assertions.assertTrue(app.http().isLoggedIn());
+    }
 }
