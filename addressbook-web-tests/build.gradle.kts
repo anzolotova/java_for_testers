@@ -9,6 +9,16 @@ repositories {
     mavenCentral()
 }
 
+val allureVersion = "2.29.0"
+val aspectJVersion = "1.9.22"
+
+configurations {
+    create("agent") {
+        isCanBeResolved = true
+        isCanBeConsumed = true
+    }
+}
+
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -17,6 +27,9 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("com.mysql:mysql-connector-j:9.2.0")
     implementation("org.hibernate.orm:hibernate-core:6.6.11.Final")
+    "agent"("org.aspectj:aspectjweaver:$aspectJVersion")
+    testImplementation(platform("io.qameta.allure:allure-bom:$allureVersion"))
+    testImplementation("io.qameta.allure:allure-junit5")
 }
 
 tasks.test {
@@ -27,4 +40,5 @@ tasks.test {
     if (project.hasProperty("target")) {
         systemProperty("target", project.property("target"))
     }
+    jvmArgs = listOf("-javaagent:${configurations["agent"].singleFile}")
 }

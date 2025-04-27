@@ -3,9 +3,7 @@ package tests;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class GroupRemovalTests extends TestBase {
@@ -31,7 +29,7 @@ public class GroupRemovalTests extends TestBase {
             app.hbm().createGroup(new GroupData("", "group name", "group header", "group footer"));
         }
         app.groups().removeAllGroups();
-        Assertions.assertEquals(0,app.hbm().getGroupCount());
+        Assertions.assertEquals(0, app.hbm().getGroupCount());
     }
 
 }

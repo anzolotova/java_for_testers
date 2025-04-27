@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,13 +20,6 @@ public class ContactCreationsTests extends TestBase {
 
     public static List<ContactData> contactProvider() throws IOException {
         var result = new ArrayList<ContactData>();
-//        for (var firstname : List.of("", "First name")) {
-//            for (var nickname : List.of("", "Nickname")) {
-//                for (var mobilePhone : List.of("", "123")) {
-//                    result.add(new ContactData().withfirstname(firstname).withNickname(nickname).withMobilePhone(mobilePhone));
-//                }
-//            }
-//        }
         var json = Files.readString(Paths.get("contacts.json"));
         ObjectMapper mapper = new ObjectMapper();
         var value = mapper.readValue(json, new TypeReference<List<ContactData>>() {});
@@ -41,23 +33,6 @@ public class ContactCreationsTests extends TestBase {
                 .withLastname(CommonFunctions.randomString(20))
                 .withNickname(CommonFunctions.randomString(30)));
     }
-
-//    @ParameterizedTest
-//    @MethodSource("randomContact")
-//    public void canCreateContact(ContactData contact) {
-//        var oldContacts = app.jdbc().getContactList();
-//        app.contacts().createContact(contact);
-//        var newContacts = app.jdbc().getContactList();
-//        Comparator<ContactData> compareByIdContact = (o1, o2) -> {
-//            return Integer.compare(Integer.parseInt(o1.idContact()), Integer.parseInt(o2.idContact()));
-//        };
-//        newContacts.sort(compareByIdContact);
-//        var maxId = newContacts.get(newContacts.size() - 1).idContact();
-//        var expectedList = new ArrayList<>(oldContacts);
-//        expectedList.add(contact.withIdContact(maxId));
-//        expectedList.sort(compareByIdContact);
-//        Assertions.assertEquals(newContacts, expectedList);
-//    }
 
     @ParameterizedTest
     @MethodSource("randomContact")
